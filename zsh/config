@@ -1,0 +1,59 @@
+bindkey -v	# Use vi mode
+bindkey '^R' history-incremental-search-backward
+
+source /home/joe/.zsh_aliases
+
+HISTFILE=/home/joe/.histfile
+HISTSIZE=1000
+SAVEHIST=1000
+
+function hack {
+  local organisation=""
+  local project=""
+
+  if [[ ! -d ~/go ]]; then
+    mkdir -p ~/go/src/github.com
+  fi
+
+  directory=$(find ~/go/src/github.com/ -mindepth 2 -maxdepth 2 -type d -name $1)
+  if [[ ! -z $directory ]]; then
+    cd $directory
+    return 0
+  fi
+
+  if [[ "$#" -eq 2 ]]; then
+    organisation=$1
+    project=$2
+  fi
+
+  if [[ "$#" -eq 1 ]]; then
+    project=$1
+
+    if $(git ls-remote https://github.com/giantswarm/$project > /dev/null 2>&1); then
+      organisation="giantswarm"
+    fi
+    if $(git ls-remote https://github.com/JosephSalisbury/$project > /dev/null 2>&1); then
+      organisation="JosephSalisbury"
+    fi
+  fi
+
+  mkdir -p ~/go/src/github.com/$organisation
+  cd ~/go/src/github.com/$organisation
+  git clone --quiet https://github.com/$organisation/$project
+  cd ~/go/src/github.com/$organisation/$project
+}
+
+function image-sha {
+  docker pull $1 | grep sha256 | awk -F ':' '{print $3}'
+}
+
+eval `ssh-agent -s` > /dev/null 2>&1
+ssh-add ~/.ssh/giantswarm_rsa > /dev/null 2>&1
+
+export PATH="$PATH:/home/joe/go/src/github.com/giantswarm/gsctl"
+export PATH="$PATH:/home/joe/go/src/github.com/giantswarm/opsctl"
+
+export OPSCTL_GITHUB_TOKEN="$(cat /secrets/opsctl-github-token)"
+
+PROMPT="$ "
+

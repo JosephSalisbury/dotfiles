@@ -1,0 +1,7 @@
+alias g='gsctl'
+alias k='kubectl'
+alias ls='ls -FGlh --color=auto' 
+alias o='opsctl'
+alias edit-config='sudo vi /etc/nixos/configuration.nix'
+alias microphone-volume='amixer set Capture'
+alias rebuild='sudo nixos-rebuild switch'
