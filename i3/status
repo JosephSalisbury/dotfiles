@@ -1,0 +1,69 @@
+#!/bin/sh
+
+set -eu
+
+function get_audio {
+  muted=$(pacmd list-sinks | grep muted | awk '{print $2}') 
+  if [ $muted == "yes" ]; then
+    echo "A: -"
+  else
+    echo "A: $(amixer sget Master | grep % | tail -n 1 | awk -F '[][]' '{print $2}')"
+  fi
+}
+
+function get_microphone {
+  muted=$(amixer | grep Capture | tail -n 1 | awk -F '[][]' '{print $4}')
+  if [ $muted == "off" ]; then
+    echo "M: -"
+  else
+    echo "M: $(amixer | grep Capture | tail -n 1 | awk -F '[][]' '{print $2}')"
+  fi
+}
+
+function get_brightness {
+  echo "B: $(xbacklight -get | awk '{print int($1/10)*10}')%"
+}
+
+function wireless {
+  if iwgetid > /dev/null; then
+    echo "W: $(iwconfig wlp3s0 | grep Signal | awk '{print $2}' | awk -F '=' '{print $2}')"
+  else
+    echo "W: -"
+  fi
+}
+
+function vpn {
+  if $(systemctl status openvpn-$1 | grep -q running); then
+    echo "☻"
+  else
+    echo "-"
+  fi
+}
+
+function battery_info {
+  echo $(acpi | grep "Battery $1" | awk '{print $3 $4}' | awk -F ',' '{print $1 " " $2}' | \
+	  sed -e 's/Charging/⚡/g' | \
+	  sed -e 's/Discharging/○/g' | \
+	  sed -e 's/Unknown/-/g' | \
+	  sed -e 's/Full/☻/g'
+	)
+}
+
+function date_info {
+  echo "$(date '+%H:%M %d/%m/%y')"
+}
+
+function bar {
+  echo "$(get_audio) | \
+$(get_microphone) | \
+$(get_brightness) | \
+$(wireless) | \
+VPN: $(vpn gridscale) $(vpn vultr) | \
+$(battery_info 0), $(battery_info 1) | \
+$(date_info)"
+}
+
+while true; do
+  bar
+  sleep 1
+done

@@ -1,0 +1,31 @@
+[alias]
+  d = diff
+  st = status --short --branch
+  co = checkout
+  lg = log -n 5 --pretty=tformat:'%Cblue%h%Creset %<(70,trunc)%s %Cgreen(%cr)%Creset %Cblue%an%Creset'
+  b = branch -a
+
+[commit]
+  gpgsign = true
+  template = /home/joe/.gittemplate
+
+[core]
+  editor = vi
+
+[credential]
+  helper = store --file=/secrets/gitcredentials
+
+[help]
+  autocorrect = -1
+
+[pager]
+  branch = false
+  log = false
+
+[url "https://github.com/"]
+  insteadOf = git://github.com/
+
+[user]
+  name = Joseph Salisbury
+  email = salisbury.joseph@gmail.com
+  signingkey = 1C6A41349CB55511
