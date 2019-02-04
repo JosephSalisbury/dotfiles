@@ -1,6 +1,8 @@
 #!/bin/sh
 
 dotfiles=(
+  './k-mgmt.sh'		'/home/joe/.k-mgmt.sh'
+
   './git/config'	'/home/joe/.gitconfig'
   './git/template'	'/home/joe/.gittemplate'
 
