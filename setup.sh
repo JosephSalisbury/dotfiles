@@ -1,6 +1,8 @@
 #!/bin/sh
 
 dotfiles=(
+  './dunst/config'      '/home/joe/.config/dunst/dunstrc'
+
   './git/config'	'/home/joe/.gitconfig'
   './git/template'	'/home/joe/.gittemplate'
 
