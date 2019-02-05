@@ -26,7 +26,7 @@ function get_brightness {
 
 function wireless {
   if iwgetid > /dev/null; then
-    echo "W: $(iwconfig wlp3s0 | grep Signal | awk '{print $2}' | awk -F '=' '{print $2}')"
+    echo "W: $(iwgetid -r) $(iwconfig wlp3s0 | grep Signal | awk '{print $2}' | awk -F '=' '{print $2}')"
   else
     echo "W: -"
   fi

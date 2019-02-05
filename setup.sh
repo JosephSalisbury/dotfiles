@@ -1,10 +1,12 @@
 #!/bin/sh
 
 dotfiles=(
-  './k-mgmt.sh'		'/home/joe/.k-mgmt.sh'
+  './dunst/config'      '/home/joe/.config/dunst/dunstrc'
 
   './git/config'	'/home/joe/.gitconfig'
   './git/template'	'/home/joe/.gittemplate'
+
+  './k-mgmt.sh'		'/home/joe/.k-mgmt.sh'
 
   './i3/brightness'	'/home/joe/.i3-brightness.sh'
   './i3/config'		'/home/joe/.config/i3/config'
