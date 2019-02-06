@@ -2,10 +2,36 @@
 
 set -eu
 
+export OPSCTL_GITHUB_TOKEN="$(cat /secrets/opsctl-github-token)"
+eval `ssh-agent -s` > /dev/null 2>&1
+ssh-add ~/.ssh/giantswarm_rsa > /dev/null 2>&1
+
 NAME="k-mgmt.sh"
 
 DIRECTORY="/tmp/gs-clusters"
 CONTROL_PLANE_LIST=$DIRECTORY/control-planes
+
+function notify {
+  level=${1:-""}
+  if [[ $level == "" ]]; then
+    return 1
+  fi
+
+
+  message=${2:-""}
+  if [[ $message == "" ]]; then
+    return 1
+  fi
+
+  echo $message
+  
+  if [ $level == "normal" ]; then
+    notify-send --urgency normal "$message"
+  fi
+  if [ $level == "critical" ]; then
+    notify-send --urgency critical "$message"
+  fi
+}
 
 function help_message {
   echo "$NAME - A tool for managing Giant Swarm kubeconfigs"
@@ -92,14 +118,14 @@ function id_is_for_control_plane {
     return 1
   fi
 
-  echo "Checking if ID is for a control plane"
+  notify "normal" "Checking if ID is for a control plane"
 
   if grep -Fxq $cluster_id $CONTROL_PLANE_LIST; then
-    echo "ID is for a control plane"
+    notify "normal" "ID is for a control plane"
     return 0
   fi
 
-  echo "ID is not for a control plane"
+  notify "normal" "ID is not for a control plane"
   return 1
 }
 
@@ -109,7 +135,7 @@ function id_is_for_tenant_cluster {
     return 1
   fi
 
-  echo "Checking if ID is for a tenant cluster"
+  notify "normal" "Checking if ID is for a tenant cluster"
 
   for cluster_list in $DIRECTORY/*; do
     if [[ $cluster_list == $CONTROL_PLANE_LIST ]]; then
@@ -117,12 +143,12 @@ function id_is_for_tenant_cluster {
     fi
 
     if grep -Fxq $cluster_id $cluster_list; then
-      echo "ID is for a tenant cluster"
+      notify "normal" "ID is for a tenant cluster"
       return 0
     fi
   done
 
-  echo "ID is not for a tenant cluster"
+  notify "normal" "ID is not for a tenant cluster"
   return 1
 }
 
@@ -132,14 +158,14 @@ function kubeconfig_exists {
     return 1
   fi
 
-  echo "Checking if kubeconfig exists for $cluster_id"
+  notify "normal" "Checking if kubeconfig exists for $cluster_id"
 
   if kubectl config get-contexts giantswarm-$cluster_id; then
-    echo "Kubeconfig exists for $cluster_id"
+    notify "normal" "Kubeconfig exists for $cluster_id"
     return 0
   fi
 
-  echo "Kubeconfig does not exist for $cluster_id"
+  notify "critical" "Kubeconfig does not exist for $cluster_id"
   return 1
 }
 
@@ -149,14 +175,14 @@ function kubeconfig_works {
     return 1
   fi
 
-  echo "Checking if kubeconfig works for $cluster_id"
+  noify "normal" "Checking if kubeconfig works for $cluster_id"
 
   if kubectl --context=giantswarm-$cluster_id cluster-info; then
-    echo "Kubeconfig works for $cluster_id"
+    notify "normal" "Kubeconfig works for $cluster_id"
     return 0
   fi
 
-  echo "Kubeconfig does not work for $cluster_id"
+  notify "critical" "Kubeconfig does not work for $cluster_id"
   return 1
 }
 
@@ -166,11 +192,11 @@ function set_kubeconfig {
     return 1
   fi
 
-  echo "Setting kubeconfig for $cluster_id"
+  notify "normal" "Setting kubeconfig for $cluster_id"
 
   kubectl config use-context giantswarm-$cluster_id 
 
-  echo "Set kubeconfig for $cluster_id"
+  notify "normal" "Set kubeconfig for $cluster_id"
 }
 
 function create_control_plane_kubeconfig {
@@ -179,11 +205,14 @@ function create_control_plane_kubeconfig {
     return 1
   fi
 
-  echo "Creating kubeconfig for control plane $cluster_id"
+  notify "normal" "Creating kubeconfig for control plane $cluster_id"
 
-  opsctl create kubeconfig -c $cluster_id 
-
-  echo "Created kubeconfig for control plane $cluster_id"
+  output=$(/home/joe/go/src/github.com/giantswarm/opsctl/opsctl create kubeconfig -c $cluster_id --user=joe)
+  if [ $? -eq 0 ]; then
+    notify "normal" "Created kubeconfig for control plane $cluster_id"
+  else
+    notify "critical" "Failed creating kubeconfig for control plane $cluster_id: $output"
+  fi
 }
 
 function create_tenant_cluster_kubeconfig {
@@ -192,9 +221,7 @@ function create_tenant_cluster_kubeconfig {
     return 1
   fi
 
-  echo "Creating kubeconfig for tenant cluster $cluster_id"
-
-  echo "Searching for installation for tenant cluster $cluster_id"
+  notify "normal" "Searching for installation for tenant cluster $cluster_id"
   installation=""
   for cluster_list in $DIRECTORY/*; do
     if [[ $cluster_list == $CONTROL_PLANE_LIST ]]; then
@@ -203,22 +230,28 @@ function create_tenant_cluster_kubeconfig {
 
     if grep -Fxq $cluster_id $cluster_list; then
       installation=$(basename $cluster_list)
-      echo "Found installation $installation for tenant cluster $cluster_id"
+      notify "normal" "Found installation $installation for tenant cluster $cluster_id"
     fi
   done
 
   if [[ $installation == "" ]]; then
-    echo "Could not find installation for $cluster_id"
+    notify "critical" "Could not find installation for $cluster_id"
     return 1
   fi
 
-  gsctl create kubeconfig \
-    --endpoint=$installation \
-    --cluster=$cluster_id \
-    --certificate-organizations=system:masters \
-    --ttl=12h 
+  notify "normal" "Creating kubeconfig for tenant cluster $cluster_id"
 
-  echo "Created kubeconfig for tenant cluster $cluster_id"
+  
+  output=$(/home/joe/go/src/github.com/giantswarm/gsctl/gsctl create kubeconfig \
+      --endpoint=$installation \
+      --cluster=$cluster_id \
+      --certificate-organizations=system:masters \
+      --ttl=12h)
+  if [ $? -eq 0 ]; then
+    notify "normal" "Created kubeconfig for tenant cluster $cluster_id"
+  else
+    notify "critical" "Failed creating kubeconfig for tenant cluster $cluster_id"
+  fi
 }
 
 function ensure_kubeconfig {
@@ -227,9 +260,9 @@ function ensure_kubeconfig {
     return 1
   fi
 
-  echo "Ensuring kubeconfig for cluster with ID $cluster_id"
+  notify "normal" "Ensuring kubeconfig for cluster with ID $cluster_id"
 
-  echo "Checking if we need to create a new kubeconfig for cluster with ID $cluster_id"
+  notify "normal" "Checking if we need to create a new kubeconfig for cluster with ID $cluster_id"
   if kubeconfig_exists $cluster_id && kubeconfig_works $cluster_id; then
     set_kubeconfig $cluster_id
     return 0
@@ -245,7 +278,7 @@ function ensure_kubeconfig {
     return 0
   fi
 
-  echo "Could not ensure kubeconfig"
+  notify "critical" "Could not ensure kubeconfig"
   return 1
 }
 

@@ -2,16 +2,11 @@
 
 path="$(tmux display-message -p -F "#{pane_current_path}")"
 git_branch=$(cd ${path}; git rev-parse --abbrev-ref HEAD 2> /dev/null)
-kubectl_context=$(kubectl config current-context)
 
 path_info="${path}"
 git_info=""
 if [ ! -z "$git_branch" ]; then
   git_info=" (${git_branch})"
 fi
-kubectl_info=""
-if [ ! -z "$kubectl_context" ]; then
-  kubectl_info=" ($kubectl_context)"
-fi
 
-echo ${path_info}${git_info}${kubectl_info}
+echo ${path_info}${git_info}

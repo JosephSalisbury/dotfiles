@@ -40,6 +40,10 @@ function vpn {
   fi
 }
 
+function get_kubeconfig {
+  echo "K: $(kubectl config current-context | sed 's/giantswarm-//g')"
+}
+
 function battery_info {
   echo $(acpi | grep "Battery $1" | awk '{print $3 $4}' | awk -F ',' '{print $1 " " $2}' | \
 	  sed -e 's/Charging/⚡/g' | \
@@ -58,6 +62,7 @@ function bar {
 $(get_microphone) | \
 $(get_brightness) | \
 $(wireless) | \
+$(get_kubeconfig) | \
 VPN: $(vpn gridscale) $(vpn vultr) | \
 $(battery_info 0), $(battery_info 1) | \
 $(date_info)"
