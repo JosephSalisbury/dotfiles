@@ -1,12 +1,14 @@
 #!/bin/sh
 
+set -eu
+
 dotfiles=(
   './dunst/config'      '/home/joe/.config/dunst/dunstrc'
 
   './git/config'	'/home/joe/.gitconfig'
   './git/template'	'/home/joe/.gittemplate'
 
-  './k-mgmt.sh'		'/home/joe/.k-mgmt.sh'
+  './bin/k-mgmt.sh'	'/home/joe/.bin/k-mgmt.sh'
 
   './i3/brightness'	'/home/joe/.i3-brightness.sh'
   './i3/config'		'/home/joe/.config/i3/config'
@@ -22,6 +24,12 @@ dotfiles=(
 for ((i=0; i<${#dotfiles[@]}; i+=2)); do
   sourceFile=${dotfiles[i]}
   targetFile=${dotfiles[i+1]}
+
+  dir=$(dirname $targetFile)
+  if [ ! -d $dir ]; then
+    echo "Making directory $dir"
+    mkdir -p $dir
+  fi
 
   echo "Linking ${sourceFile} to ${targetFile}"
   ln -f $sourceFile $targetFile
