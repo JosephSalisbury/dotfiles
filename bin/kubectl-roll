@@ -1,0 +1,49 @@
+#!/bin/sh
+
+set -eu
+
+function help_message {
+  echo "Gracefully restart all pods by selector."
+  echo ""
+  echo "Examples:"
+  echo "  # Delete each pod in the specified namespace that matches the selector."
+  echo "  $ kubectl roll namespace foo=bar"
+  echo ""
+  echo "Usage:"
+  echo "  kubectl roll [namespace] [selector]"
+}
+
+function roll {
+  local namespace="$1"
+  local selector="$2"
+  local interval="$3"
+
+  pods=$(kubectl \
+	  --namespace=$namespace \
+	  get \
+	  --no-headers \
+	  pods \
+	  --selector=$selector \
+	  --output=custom-columns=:metadata.name \
+  )
+
+  for pod in $pods; do
+    kubectl --namespace=$namespace delete pod $pod
+    sleep $interval
+  done
+}
+
+
+one=${1:-}
+if [[ -z $one || $one == "--help" || $one == "-h" ]]; then
+  help_message
+  exit 1
+fi
+
+two=${2:-}
+if [ -z $two ]; then
+  help_message
+  exit 1
+fi
+
+roll $one $two 30

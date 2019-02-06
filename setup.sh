@@ -9,6 +9,7 @@ dotfiles=(
   './git/template'	'/home/joe/.gittemplate'
 
   './bin/k-mgmt.sh'	'/home/joe/.bin/k-mgmt.sh'
+  './bin/kubectl-roll'	'/home/joe/.bin/kubectl-roll'
 
   './i3/brightness'	'/home/joe/.i3-brightness.sh'
   './i3/config'		'/home/joe/.config/i3/config'
