@@ -3,7 +3,7 @@ set $mod Mod4
 font pango:monospace 10
 focus_follows_mouse no
 
-exec --no-startup-id feh --bg-fill /home/joe/.wallpapers/mountain.jpg
+exec --no-startup-id feh --bg-scale /home/joe/.wallpapers/mountain.jpg
 
 default_border pixel 1
 hide_edge_borders smart
@@ -51,6 +51,7 @@ bindsym $mod+Shift+e exec "i3-nagbar -t warning -m 'Exit i3' -b 'Exit i3' 'i3-ms
 bindsym $mod+Shift+p exec "i3-nagbar -t error -m 'Power Off' -b 'Power Off' 'poweroff'"
 
 bindsym $mod+c exec --no-startup-id /home/joe/.bin/k-mgmt.sh --print-cluster-lists | dmenu | xargs /home/joe/.bin/k-mgmt.sh
+bindsym $mod+n exec --no-startup-id /home/joe/.bin/k-mgmt.sh --print-namespaces | dmenu | xargs /home/joe/.bin/k-mgmt.sh --set-namespace
 
 bindsym XF86AudioMute exec --no-startup-id pactl set-sink-mute 0 toggle
 bindsym XF86AudioLowerVolume exec --no-startup-id pactl set-sink-volume 0 -5%

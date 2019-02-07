@@ -17,7 +17,6 @@ function notify {
     return 1
   fi
 
-
   message=${2:-""}
   if [[ $message == "" ]]; then
     return 1
@@ -37,6 +36,8 @@ function help_message {
   echo "$NAME - A tool for managing Giant Swarm kubeconfigs"
   echo "  --build-cluster-lists to build cluster lists (used for determining installations, and dmenu integration)"
   echo "  --print-cluster-lists to print cluster lists"
+  echo "  --print-namespaces to print namespaces"
+  echo "  --set-namespace to set namespace"
   echo "  --help to show this text message"
   echo "  [cluster-id] to ensure kubeconfig for that cluster is set"
 }
@@ -53,6 +54,25 @@ function build_cluster_lists {
 
 function print_cluster_lists {
   cat $DIRECTORY/* | uniq | sort
+}
+
+function print_namespaces {
+  kubectl get --no-headers namespaces --output custom-columns=:metadata.name
+}
+
+function set_namespace {
+  namespace=${1:-""}
+  if [[ $namespace == "" ]]; then
+    return 1
+  fi
+
+  notify "normal" "Setting namespace $namespace"
+
+  if kubectl config set-context --current --namespace=$namespace; then
+    notify "normal" "Namespace set"
+  else
+    notify "critical" "Could not set namespace"
+  fi
 }
 
 function ensure_directory {
@@ -298,8 +318,19 @@ function main {
     exit 0
   fi
 
+  if [[ $arg == "--print-namespaces" ]]; then
+    print_namespaces
+    exit 0
+  fi
+
+  if [[ $arg == "--set-namespace" ]]; then
+    set_namespace $arg2
+    exit 0
+  fi
+
   ensure_kubeconfig $arg 
 }
 
 arg=${1:-""}
-main $arg
+arg2=${2:-""}
+main $arg $arg2

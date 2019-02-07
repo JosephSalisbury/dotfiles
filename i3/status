@@ -65,7 +65,9 @@ function vpn {
 }
 
 function get_kubeconfig {
-  echo "K: $(kubectl config current-context | sed 's/giantswarm-//g')"
+	context=$(kubectl config current-context | sed 's/giantswarm-//g')
+	namespace=$(kubectl config view -o=jsonpath="{.contexts[?(@.name==\""$(kubectl config current-context)"\")].context.namespace}")
+	echo "K: $context/$namespace"
 }
 
 function battery_info {
