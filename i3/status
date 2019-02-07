@@ -24,12 +24,36 @@ function get_brightness {
   echo "B: $(xbacklight -get | awk '{print int($1/10)*10}')%"
 }
 
-function wireless {
-  if iwgetid > /dev/null; then
-    echo "W: $(iwgetid -r) $(iwconfig wlp3s0 | grep Signal | awk '{print $2}' | awk -F '=' '{print $2}')"
-  else
-    echo "W: -"
+function get_internet {
+  ethernet_connected=1
+  ethernet_string="No Ethernet"
+  if $(ifconfig enp0s25 | grep -q inet); then
+    ethernet_string="Ethernet"
+    ethernet_connected=0
   fi
+
+  wireless_connected=1
+  wireless_string="No WiFi"
+  if iwgetid > /dev/null; then
+	  wireless_string="$(iwgetid -r) ($(iwconfig wlp3s0 | grep Signal | awk '{print $2}' | awk -F '=' '{print $2}'))"
+    wireless_connected=0
+  fi
+
+  output="I: "
+  if [ $ethernet_connected -eq 0 ]; then
+    output="$output$ethernet_string"
+  fi
+  if [ $ethernet_connected -eq 0 ] && [ $wireless_connected -eq 0 ]; then
+    output="$output, "
+  fi
+  if [ $wireless_connected -eq 0 ]; then
+    output="$output$wireless_string"
+  fi
+  if [ $ethernet_connected -eq 1 ] && [ $wireless_connected -eq 1 ]; then
+    output="I: No Internet"
+  fi
+
+  echo $output
 }
 
 function vpn {
@@ -61,7 +85,7 @@ function bar {
   echo "$(get_audio) | \
 $(get_microphone) | \
 $(get_brightness) | \
-$(wireless) | \
+$(get_internet) | \
 $(get_kubeconfig) | \
 VPN: $(vpn gridscale) $(vpn vultr) | \
 $(battery_info 0), $(battery_info 1) | \
