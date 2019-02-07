@@ -3,6 +3,8 @@ set $mod Mod4
 font pango:monospace 10
 focus_follows_mouse no
 
+exec --no-startup-id feh --bg-fill /home/joe/.wallpapers/mountain.jpg
+
 default_border pixel 1
 hide_edge_borders smart
 
