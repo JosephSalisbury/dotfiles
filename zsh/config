@@ -1,6 +1,9 @@
 bindkey -v	# Use vi mode
 bindkey '^R' history-incremental-search-backward
 
+autoload -U compinit
+compinit
+
 source /home/joe/.zsh_aliases
 source <(kubectl completion zsh)
 
