@@ -35,7 +35,7 @@ function get_internet {
   wireless_connected=1
   wireless_string="No WiFi"
   if iwgetid > /dev/null; then
-	  wireless_string="$(iwgetid -r) ($(iwconfig wlp3s0 | grep Signal | awk '{print $2}' | awk -F '=' '{print $2}'))"
+    wireless_string="$(iwgetid -r)"
     wireless_connected=0
   fi
 
