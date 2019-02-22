@@ -77,5 +77,8 @@ export PATH="$PATH:/home/joe/go/src/github.com/giantswarm/gsctl"
 export PATH="$PATH:/home/joe/go/src/github.com/giantswarm/opsctl"
 
 export OPSCTL_GITHUB_TOKEN="$(cat /secrets/opsctl-github-token)"
+
+export EDITOR=vi
+
 export PS1="$ "
 
