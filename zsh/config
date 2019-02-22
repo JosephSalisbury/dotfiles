@@ -51,6 +51,10 @@ function image-sha {
   docker pull $1 | grep sha256 | awk -F ':' '{print $3}'
 }
 
+function logs {
+  kubectl logs -f $(kubectl get --no-headers pod -l=app=$1 -o=custom-columns=NAME:.metadata.name)
+}
+
 function wl {
   prev=$(history | tail -n 1 | cut -c 8-)
   prev_command=$(echo $prev | awk '{print $1}')
