@@ -3,13 +3,15 @@
 set -eu
 
 dotfiles=(
+  './bin/k-mgmt.sh'	'/home/joe/.bin/k-mgmt.sh'
+  './bin/kubectl-roll'	'/home/joe/.bin/kubectl-roll'
+
   './dunst/config'      '/home/joe/.config/dunst/dunstrc'
 
   './git/config'	'/home/joe/.gitconfig'
   './git/template'	'/home/joe/.gittemplate'
 
-  './bin/k-mgmt.sh'	'/home/joe/.bin/k-mgmt.sh'
-  './bin/kubectl-roll'	'/home/joe/.bin/kubectl-roll'
+  './gnupg/config'	'/home/joe/.gnupg/gpg-agent.conf'
 
   './i3/brightness'	'/home/joe/.i3-brightness.sh'
   './i3/config'		'/home/joe/.config/i3/config'
