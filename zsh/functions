@@ -53,6 +53,33 @@ function logs {
   kubectl logs -f $pod $2
 }
 
+function roll {
+  if [ -z "$1" ]; then
+    echo "Please specify label selector (e.g: app=prometheus)"
+    return 1
+  fi
+
+  interval=30
+  if [ -z "$2" ]; then
+    echo "Interval not specified, using default $interval seconds"
+  else
+    interval=$2
+  fi
+
+  pods=$(kubectl get --no-headers pod -l=$1 -o=custom-columns=NAME:.metadata.name)
+  if [ -z "$pods" ]; then
+    echo "Could not find matching pods"
+    return 1
+  fi
+
+  echo "Rolling pods: $(echo $pods | tr '\n' ' ')"
+
+  while read pod; do;
+    kubectl delete pod $pod
+    sleep $interval
+  done <<< $pods
+}
+
 function wl {
   prev=$(history | tail -n 1 | cut -c 8-)
   prev_command=$(echo $prev | awk '{print $1}')
