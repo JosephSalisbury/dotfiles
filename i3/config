@@ -50,8 +50,6 @@ bindsym $mod+Shift+4 move container to workspace $ws4
 bindsym $mod+Shift+5 move container to workspace $ws5
 
 bindsym $mod+Shift+r restart
-bindsym $mod+Shift+e exec "i3-nagbar -t warning -m 'Exit i3' -b 'Exit i3' 'i3-msg exit'"
-bindsym $mod+Shift+p exec "i3-nagbar -t error -m 'Power Off' -b 'Power Off' 'poweroff'"
 
 bindsym $mod+c exec --no-startup-id /home/joe/.bin/k-mgmt.sh --print-cluster-lists | dmenu | xargs /home/joe/.bin/k-mgmt.sh
 bindsym $mod+n exec --no-startup-id /home/joe/.bin/k-mgmt.sh --print-namespaces | dmenu | xargs /home/joe/.bin/k-mgmt.sh --set-namespace
