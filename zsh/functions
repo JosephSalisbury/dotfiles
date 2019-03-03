@@ -53,6 +53,10 @@ function logs {
   kubectl logs -f $pod $2
 }
 
+function password {
+  cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 64 | head -n 1
+}
+
 function roll {
   if [ -z "$1" ]; then
     echo "Please specify label selector (e.g: app=prometheus)"
