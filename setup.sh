@@ -20,6 +20,7 @@ dotfiles=(
 
   './zsh/aliases'	'/home/joe/.zsh_aliases'
   './zsh/config'	'/home/joe/.zshrc'
+  './zsh/functions'	'/home/joe/.zsh_functions'
 )
 
 for ((i=0; i<${#dotfiles[@]}; i+=2)); do
