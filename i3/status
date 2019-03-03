@@ -58,7 +58,7 @@ function get_internet {
 
 function vpn {
   if $(systemctl status openvpn-$1 | grep -q running); then
-    echo "☻"
+    echo "◍"
   else
     echo "-"
   fi
@@ -75,7 +75,7 @@ function battery_info {
 	  sed -e 's/Charging/⚡/g' | \
 	  sed -e 's/Discharging/○/g' | \
 	  sed -e 's/Unknown/-/g' | \
-	  sed -e 's/Full/☻/g'
+	  sed -e 's/Full/◍/g'
 	)
 }
 
