@@ -8,7 +8,7 @@ ssh-add ~/.ssh/giantswarm_rsa > /dev/null 2>&1
 
 NAME="k-mgmt.sh"
 
-DIRECTORY="/tmp/gs-clusters"
+DIRECTORY="/var/gs-clusters"
 CONTROL_PLANE_LIST=$DIRECTORY/control-planes
 
 function notify {
