@@ -39,7 +39,18 @@ function image-sha {
 }
 
 function logs {
-  kubectl logs -f $(kubectl get --no-headers pod -l=app=$1 -o=custom-columns=NAME:.metadata.name)
+  if [ -z "$1" ]; then
+    echo "Please specify label selector (e.g: app=prometheus)"
+    return 1
+  fi
+
+  pod=$(kubectl get --no-headers pod -l=$1 -o=custom-columns=NAME:.metadata.name)
+  if [ -z "$pod" ]; then
+    echo "Could not find single matching pod"
+    return 1
+  fi
+
+  kubectl logs -f $pod $2
 }
 
 function wl {
