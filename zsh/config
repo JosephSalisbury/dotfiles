@@ -1,4 +1,7 @@
-bindkey -v	# Use vi mode
+bindkey -v
+
+bindkey '^?' backward-delete-char
+bindkey '^h' backward-delete-char
 bindkey '^R' history-incremental-search-backward
 
 autoload -U compinit
@@ -17,6 +20,8 @@ eval `ssh-agent -s` > /dev/null 2>&1
 ssh-add ~/.ssh/giantswarm_rsa > /dev/null 2>&1
 
 prompt off
+
+export KEYTIMEOUT=1
 
 export PATH="$PATH:/home/joe/.bin"
 export PATH="$PATH:/home/joe/go/src/github.com/giantswarm/gsctl"
