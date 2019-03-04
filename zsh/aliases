@@ -1,5 +1,6 @@
 alias g='gsctl'
 alias git='hub'
+alias issues='git issue -a JosephSalisbury --format="%Cblue%<(7,trunc)%i%Creset %<(70,trunc)%t %Cgreen(%cr)%Creset %Cblue%au%Creset %n"'
 alias k='kubectl'
 alias ls='ls -FGlh --color=auto' 
 alias microphone-volume='amixer set Capture'
