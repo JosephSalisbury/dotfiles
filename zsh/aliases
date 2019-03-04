@@ -1,4 +1,5 @@
 alias g='gsctl'
+alias git='hub'
 alias k='kubectl'
 alias ls='ls -FGlh --color=auto' 
 alias microphone-volume='amixer set Capture'
