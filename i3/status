@@ -89,8 +89,8 @@ $(get_microphone) | \
 $(get_brightness) | \
 $(get_internet) | \
 $(get_kubeconfig) | \
-VPN: $(vpn gridscale) $(vpn vultr) | \
-$(battery_info 0), $(battery_info 1) | \
+V: $(vpn gridscale) $(vpn vultr) | \
+P: $(battery_info 0), $(battery_info 1) | \
 $(date_info)"
 }
 
