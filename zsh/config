@@ -27,6 +27,7 @@ export PATH="$PATH:/home/joe/go/src/github.com/giantswarm/opsctl"
 
 export OPSCTL_GITHUB_TOKEN="$(cat /secrets/opsctl-github-token)"
 export OPSCTL_OPSGENIE_TOKEN="$(cat /secrets/opsctl-opsgenie-token)"
+export ONCALL_OPSGENIE_API_KEY="$(cat /secrets/oncall-opsgenie-api-key)"
 
 export EDITOR=vi
 export GPG_TTY=$(tty)
